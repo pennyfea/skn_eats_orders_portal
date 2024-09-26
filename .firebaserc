@@ -1,5 +1,16 @@
 {
   "projects": {
     "default": "skneats"
-  }
+  },
+  "targets": {
+    "skneats": {
+      "hosting": {
+        "skneat-orders-system": [
+          "skneat-orders-system"
+        ]
+      }
+    }
+  },
+  "etags": {},
+  "dataconnectEmulatorConfig": {}
 }
