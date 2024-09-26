@@ -11,7 +11,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
       backgroundColor: Colors.black,
-      title: Text(' Eats', style: Theme.of(context).textTheme.headlineSmall!.copyWith(color: Colors.white)),
+      title: Text('SKN Eats', style: Theme.of(context).textTheme.headlineSmall!.copyWith(color: Colors.white)),
       titleSpacing: (Responsive.isMobile(context) || Responsive.isTablet(context)) ? 0 : -30,
       centerTitle: false,
       leading: Builder(
