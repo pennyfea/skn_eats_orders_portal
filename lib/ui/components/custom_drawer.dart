@@ -29,17 +29,6 @@ class CustomDrawer extends StatelessWidget {
       backgroundColor: Colors.white,
       child: Column(
         children: [
-          SizedBox(
-            height: 60.0,
-            child: DrawerHeader(
-                child: Text(
-              "SKN Eats",
-              style: Theme.of(context)
-                  .textTheme
-                  .headlineSmall!
-                  .copyWith(fontSize: 20),
-            )),
-          ),
           Expanded(
             child: ListView(
               children: screens.entries.map((entry) {

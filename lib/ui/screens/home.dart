@@ -35,6 +35,7 @@ class _HomeState extends State<Home> {
   //       listeners: [],
   //       child: Scaffold(
   //         key: context.read<MenuAppController>().scaffoldKey,
+//           appBar: const CustomAppBar(),
   //         drawer: const CustomDrawer(),
   //         body: SafeArea(
   //             child: Row(
@@ -55,6 +56,7 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: context.read<MenuAppController>().scaffoldKey,
+      appBar: const CustomAppBar(),
       drawer: const CustomDrawer(),
       body: SafeArea(
         child: Row(

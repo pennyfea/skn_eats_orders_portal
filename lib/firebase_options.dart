@@ -53,12 +53,13 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyBSscjWwCZ-2o8FOCuqhKG3nK60bn3mG8s',
-    appId: '1:299496212596:web:6e70d24b72bd8eb0346921',
-    messagingSenderId: '299496212596',
-    projectId: 'skneats-orders-system',
-    authDomain: 'skneats-orders-system.firebaseapp.com',
-    storageBucket: 'skneats-orders-system.appspot.com',
- );
+    apiKey: 'AIzaSyDe5bvHEFTdXIZRdS_Q1y3UI3F5tmcqXVY',
+    appId: '1:316909027896:web:7ec415b09aa7f37bf61ccd',
+    messagingSenderId: '316909027896',
+    projectId: 'skneats',
+    authDomain: 'skneats.firebaseapp.com',
+    storageBucket: 'skneats.appspot.com',
+    measurementId: 'G-57KRSW6T5L',
+  );
 
 }
