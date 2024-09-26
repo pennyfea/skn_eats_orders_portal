@@ -1,22 +1,21 @@
 {
-  "flutter": {
-    "platforms": {
-      "dart": {
-        "lib/firebase_options.dart": {
-          "projectId": "skneats",
-          "configurations": {
-            "web": "1:316909027896:web:7ec415b09aa7f37bf61ccd"
-          }
-        }
-      }
-    }
-  },
   "hosting": {
     "public": "build/web",
     "ignore": [
       "firebase.json",
       "**/.*",
       "**/node_modules/**"
+    ],
+    "headers": [
+      {
+        "source": "**",
+        "headers": [
+          {
+            "key": "Access-Control-Allow-Origin",
+            "value": "https://skneat-orders-system.firebaseapp.com/"
+          }
+        ]
+      }
     ],
     "rewrites": [
       {
