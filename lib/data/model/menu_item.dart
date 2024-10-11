@@ -9,10 +9,11 @@ part 'menu_item.g.dart';
 class MenuItem extends Equatable {
   final String? id;
   final String? restaurantId;
+  final String? locationId;
   final String name;
   final String? imageUrl;
-  final List<MenuCategory> menuCategories;
-  final List<MenuCategory>? itemCategories;
+  final List<String>? menuCategoryIds;
+  final List<String>? itemCategoryIds;
   final List<MenuItemOption>? requiredOptions;
   final List<MenuItemOption>? optionalAddOns;
   final String description;
@@ -21,10 +22,11 @@ class MenuItem extends Equatable {
   const MenuItem({
     this.id,
     this.restaurantId,
+    this.locationId,
     required this.name,
     this.imageUrl,
-    required this.menuCategories,
-    this.itemCategories,
+    required this.menuCategoryIds,
+    this.itemCategoryIds,
     this.requiredOptions,
     this.optionalAddOns,
     required this.description,
@@ -34,10 +36,11 @@ class MenuItem extends Equatable {
   MenuItem copyWith({
     String? id,
     String? restaurantId,
+    String? locationId,
     String? name,
     String? imageUrl,
-    List<MenuCategory>? itemCategories,
-    List<MenuCategory>? menuCategories,
+    List<String>? itemCategoryIds,
+    List<String>? menuCategoryIds,
     List<MenuItemOption>? requiredOptions,
     List<MenuItemOption>? optionalAddOns,
     String? description,
@@ -45,30 +48,32 @@ class MenuItem extends Equatable {
   }) {
     return MenuItem(
       id: id ?? this.id,
+      restaurantId: restaurantId ?? this.restaurantId,
+      locationId: locationId ?? this.locationId,
       name: name ?? this.name,
       imageUrl: imageUrl ?? this.imageUrl,
-      itemCategories: itemCategories ?? this.itemCategories,
-      menuCategories: menuCategories ?? this.menuCategories,
+      itemCategoryIds: itemCategoryIds ?? this.itemCategoryIds,
+      menuCategoryIds: menuCategoryIds ?? this.menuCategoryIds,
       requiredOptions: requiredOptions ?? this.requiredOptions,
       optionalAddOns: optionalAddOns ?? this.optionalAddOns,
       description: description ?? this.description,
       price: price ?? this.price,
-      restaurantId: restaurantId ?? this.restaurantId,
     );
   }
 
   @override
   List<Object?> get props => [
         id,
+        restaurantId,
+        locationId,
         name,
         imageUrl,
-        menuCategories,
-        itemCategories,
+        menuCategoryIds,
+        itemCategoryIds,
         requiredOptions,
         optionalAddOns,
         description,
         price,
-        restaurantId,
       ];
 
   // Update serialization for Firestore and JSON
@@ -82,11 +87,11 @@ class MenuItem extends Equatable {
     return {
       'id': id,
       'restaurantId': restaurantId,
+      'locationId': locationId,
       'name': name,
       'imageUrl': imageUrl,
-      'menuCategories': menuCategories.map((cat) => cat.toFirestore()).toList(),
-      if (itemCategories != null)
-        'itemCategories': itemCategories!.map((cat) => cat.toFirestore()).toList(),
+      'menuCategoryIds': menuCategoryIds,
+      'itemCategoryIds': itemCategoryIds,
       if (requiredOptions != null)
         'requiredOptions': requiredOptions!.map((e) => e.toJson()).toList(),
       if (optionalAddOns != null)
@@ -96,7 +101,8 @@ class MenuItem extends Equatable {
     };
   }
 
-  factory MenuItem.fromFirestore(DocumentSnapshot<Map<String, dynamic>> snapshot) {
+  factory MenuItem.fromFirestore(
+      DocumentSnapshot<Map<String, dynamic>> snapshot) {
     final data = snapshot.data();
     if (data == null) {
       throw Exception('Document does not exist');
@@ -105,16 +111,11 @@ class MenuItem extends Equatable {
     return MenuItem(
       id: data['id'] as String?,
       restaurantId: data['restaurantId'] as String?,
+      locationId: data['locationId'] as String?,
       name: data['name'] as String,
       imageUrl: data['imageUrl'] as String?,
-      menuCategories: (data['menuCategories'] as List<dynamic>)
-          .map((cat) => MenuCategory.fromFirestore(cat))
-          .toList(),
-      itemCategories: data['itemCategories'] != null
-          ? (data['itemCategories'] as List<dynamic>)
-              .map((cat) => MenuCategory.fromFirestore(cat))
-              .toList()
-          : null,
+      menuCategoryIds: List<String>.from(data['menuCategoryIds'] ?? []),
+      itemCategoryIds: List<String>.from(data['itemCategoryIds'] ?? []),
       requiredOptions: data['requiredOptions'] != null
           ? List<MenuItemOption>.from((data['requiredOptions'] as List)
               .map((e) => MenuItemOption.fromJson(e)))

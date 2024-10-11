@@ -9,13 +9,14 @@ part of 'menu_item.dart';
 MenuItem _$MenuItemFromJson(Map<String, dynamic> json) => MenuItem(
       id: json['id'] as String?,
       restaurantId: json['restaurantId'] as String?,
+      locationId: json['locationId'] as String?,
       name: json['name'] as String,
       imageUrl: json['imageUrl'] as String?,
-      menuCategories: (json['menuCategories'] as List<dynamic>)
-          .map((e) => MenuCategory.fromJson(e as Map<String, dynamic>))
+      menuCategoryIds: (json['menuCategoryIds'] as List<dynamic>?)
+          ?.map((e) => e as String)
           .toList(),
-      itemCategories: (json['itemCategories'] as List<dynamic>?)
-          ?.map((e) => MenuCategory.fromJson(e as Map<String, dynamic>))
+      itemCategoryIds: (json['itemCategoryIds'] as List<dynamic>?)
+          ?.map((e) => e as String)
           .toList(),
       requiredOptions: (json['requiredOptions'] as List<dynamic>?)
           ?.map((e) => MenuItemOption.fromJson(e as Map<String, dynamic>))
@@ -30,10 +31,11 @@ MenuItem _$MenuItemFromJson(Map<String, dynamic> json) => MenuItem(
 Map<String, dynamic> _$MenuItemToJson(MenuItem instance) => <String, dynamic>{
       'id': instance.id,
       'restaurantId': instance.restaurantId,
+      'locationId': instance.locationId,
       'name': instance.name,
       'imageUrl': instance.imageUrl,
-      'menuCategories': instance.menuCategories,
-      'itemCategories': instance.itemCategories,
+      'menuCategoryIds': instance.menuCategoryIds,
+      'itemCategoryIds': instance.itemCategoryIds,
       'requiredOptions': instance.requiredOptions,
       'optionalAddOns': instance.optionalAddOns,
       'description': instance.description,
