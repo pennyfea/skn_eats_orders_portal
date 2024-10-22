@@ -6,7 +6,6 @@ class CustomerOrderActionView extends StatefulWidget {
   final CustomerOrder customerOrder;
   final Function(CustomerOrder updatedOrder) onAccept;
   final Function(CustomerOrder updatedOrder) onCancel;
-  
 
   const CustomerOrderActionView({
     super.key,
@@ -16,7 +15,8 @@ class CustomerOrderActionView extends StatefulWidget {
   });
 
   @override
-  State<CustomerOrderActionView> createState() => _CustomerOrderActionViewState();
+  State<CustomerOrderActionView> createState() =>
+      _CustomerOrderActionViewState();
 }
 
 class _CustomerOrderActionViewState extends State<CustomerOrderActionView> {
@@ -25,7 +25,7 @@ class _CustomerOrderActionViewState extends State<CustomerOrderActionView> {
   @override
   void initState() {
     super.initState();
-    selectedTime = const TimeOfDay(hour: 0, minute: 30); // Default 30 minutes
+    selectedTime = const TimeOfDay(hour: 0, minute: 30);
   }
 
   void _handleAccept() {
@@ -64,68 +64,73 @@ class _CustomerOrderActionViewState extends State<CustomerOrderActionView> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(25),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Expanded(
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
+          Text('Ready time',
+              style: Theme.of(context)
+                  .textTheme
+                  .headlineSmall!
+                  .copyWith(fontSize: 20)),
+  
+          Text('${selectedTime.minute} min',
+              style: Theme.of(context).textTheme.headlineLarge),
+          if (selectedTime == const TimeOfDay(hour: 0, minute: 30))
+            Text('Suggested',
+                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                    color: Colors.green, fontWeight: FontWeight.w700)),
+          SizedBox(
+            width: 80,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor:
+                    Theme.of(context).colorScheme.surfaceContainerHighest,
+                padding: const EdgeInsets.symmetric(vertical: 16),
+              ),
+              onPressed: () => selectTime(context),
+              child: const Row(
                 children: [
-                  Text('Ready time', style: Theme.of(context).textTheme.headlineSmall!.copyWith(fontSize: 20)),
-                  const SizedBox(height: 8),
-                  Text('${selectedTime.minute} min', style: Theme.of(context).textTheme.headlineLarge),
-                  if (selectedTime == const TimeOfDay(hour: 0, minute: 30))
-                    Text(
-                      'Suggested', 
-                      style: Theme.of(context).textTheme.bodyMedium!
-                        .copyWith(color: Colors.green, fontWeight: FontWeight.w700)
-                    ),
-                  const SizedBox(height: 16),
                   SizedBox(
-                    width: 80,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                      ),
-                      onPressed: () => selectTime(context),
-                      child: const Row(
-                        children: [
-                          SizedBox(width: 5,),
-                          Icon(Icons.edit),
-                          SizedBox(width: 5,),
-                          Text('Edit'),
-                        ],
-                      ),
-                    ),
+                    width: 5,
                   ),
+                  Icon(Icons.edit),
+                  SizedBox(
+                    width: 5,
+                  ),
+                  Text('Edit'),
                 ],
               ),
             ),
           ),
-          MaterialButton(
-            minWidth: MediaQuery.of(context).size.width,
-            height: 50.0,
-            textColor: Colors.white,
-            color: Colors.red,
-            elevation: 0,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
-            onPressed: _handleCancel,
-            child: const Text('Cancel', style: TextStyle(fontSize: 18)),
-          ),
-          const SizedBox(height: 5,),
-          MaterialButton(
-            minWidth: MediaQuery.of(context).size.width,
-            height: 50.0,
-            textColor: Colors.white,
-            color: Colors.black,
-            elevation: 0,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
-
-            onPressed: _handleAccept,
-            child: const Text('Accept', style: TextStyle(fontSize: 18)),
+          Column(
+            children: [
+              MaterialButton(
+                minWidth: MediaQuery.of(context).size.width,
+                height: 50.0,
+                textColor: Colors.white,
+                color: Colors.red,
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4.0)),
+                onPressed: _handleCancel,
+                child: const Text('Cancel', style: TextStyle(fontSize: 18)),
+              ),
+              const SizedBox(
+                height: 5,
+              ),
+              MaterialButton(
+                minWidth: MediaQuery.of(context).size.width,
+                height: 50.0,
+                textColor: Colors.white,
+                color: Colors.green,
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4.0)),
+                onPressed: _handleAccept,
+                child: const Text('Accept', style: TextStyle(fontSize: 18)),
+              ),
+            ],
           ),
         ],
       ),
@@ -144,7 +149,8 @@ class _CustomerOrderActionViewState extends State<CustomerOrderActionView> {
               return Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  Text('$selectedMinutes minutes', style: Theme.of(context).textTheme.headlineMedium),
+                  Text('$selectedMinutes minutes',
+                      style: Theme.of(context).textTheme.headlineMedium),
                   Slider(
                     value: selectedMinutes.toDouble(),
                     min: 5,
@@ -167,9 +173,8 @@ class _CustomerOrderActionViewState extends State<CustomerOrderActionView> {
               onPressed: () => Navigator.of(context).pop(),
             ),
             TextButton(
-              child: const Text('OK'),
-              onPressed: () => Navigator.of(context).pop(selectedMinutes)
-            ),
+                child: const Text('OK'),
+                onPressed: () => Navigator.of(context).pop(selectedMinutes)),
           ],
         );
       },

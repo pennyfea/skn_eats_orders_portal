@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../config/responsive.dart';
-import '../../../data/blocs.dart';
 import '../../../data/models.dart';
 import '../components.dart';
 
 class NewCustomerOrderDialog extends StatefulWidget {
   final List<CustomerOrder> customerOrders;
+  final Function(CustomerOrder) onAccept;
+  final Function(CustomerOrder) onCancel;
+  final VoidCallback onClose;
 
   const NewCustomerOrderDialog({
     super.key,
-    required this.customerOrders
+    required this.customerOrders,
+    required this.onAccept,
+    required this.onCancel,
+    required this.onClose,
   });
 
   @override
@@ -18,114 +21,111 @@ class NewCustomerOrderDialog extends StatefulWidget {
 }
 
 class _NewCustomerOrderDialogState extends State<NewCustomerOrderDialog> {
-  int currentOrderIndex = 0;
-
-  void _handleAccept(CustomerOrder updatedOrder) {
-    // context.read<CustomerOrderBloc>().add(CustomerOrderUpdated(
-    //   customerOrder: updatedOrder,
-    // ));
-  }
-
-  void _handleCancel(CustomerOrder updatedOrder) {
-    // context.read<CustomerOrderBloc>().add(CustomerOrderUpdated(
-    //   customerOrder: updatedOrder,
-    // ));
-  }
+  int _currentOrderIndex = 0;
 
   void _moveToNextOrder() {
-    if (currentOrderIndex < widget.customerOrders.length - 1) {
+    if (_currentOrderIndex < widget.customerOrders.length - 1) {
       setState(() {
-        currentOrderIndex++;
+        _currentOrderIndex++;
       });
     } else {
-      Navigator.of(context).pop();
+      widget.onClose();
     }
   }
 
+  String get _firstName => widget.customerOrders[_currentOrderIndex].firstName;
+  String get _lastName => widget.customerOrders[_currentOrderIndex].lastName;
+  String get _orderId =>
+      widget.customerOrders[_currentOrderIndex].id.substring(0, 5);
+  String get _phoneNumber =>
+      widget.customerOrders[_currentOrderIndex].contactPhone;
+
   @override
   Widget build(BuildContext context) {
-    return BlocListener<CustomerOrderBloc, CustomerOrderState>(
-      listener: (context, state) {
-        if (state is CustomerOrderLoaded) {
-          // Check if the current order has been accepted or cancelled
-          if (state.orders.any((order) => 
-              order.id == widget.customerOrders[currentOrderIndex].id && 
-              order.status == OrderStatus.preparing)) {
-            _moveToNextOrder();
-          } else if (state.orders.any((order) => 
-              order.id == widget.customerOrders[currentOrderIndex].id && 
-              order.status == OrderStatus.cancel)) {
-            _moveToNextOrder();
-          }
-        }
-      },
-      child: Dialog.fullscreen(
-        backgroundColor: Colors.white,
-        child: CustomLayout(
-          header: [
-            Row(
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.close),
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
-                Text(
-                  '${widget.customerOrders[currentOrderIndex].firstName} ${widget.customerOrders[currentOrderIndex].lastName[0]}',
-                  style: Theme.of(context).textTheme.headlineMedium,
-                ),
-                const SizedBox(width: 6),
-                const Icon(Icons.circle, size: 10.0),
-                const SizedBox(width: 6),
-                Text(
-                  widget.customerOrders[currentOrderIndex].id.substring(0,5), 
-                  style: Theme.of(context).textTheme.headlineMedium,
-                ),
-                IconButton(
-                  icon: const Icon(Icons.phone), 
-                  onPressed: () => _showPhoneDialog(context, widget.customerOrders[currentOrderIndex])
-                ),
-                Text('Order ${currentOrderIndex + 1} of ${widget.customerOrders.length}'),
-              ],
-            )
-          ],
-          widgets: [
-            if (Responsive.isWideDesktop(context) || Responsive.isDesktop(context))
-              IntrinsicHeight(
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(flex: 2, child: CustomerOrderListView(customerOrder: widget.customerOrders[currentOrderIndex])),
-                    Container(
-                      width: 1,
-                      color: Colors.grey[300],
-                    ),
-                    Expanded(child: CustomerOrderActionView(
-                      customerOrder: widget.customerOrders[currentOrderIndex],
-                      onAccept: _handleAccept,
-                      onCancel: _handleCancel,
-                    )),
-                  ],
-                ),
-              )
-            else
-              Column(
+    return Dialog.fullscreen(
+      backgroundColor: Colors.white,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(30.0),
+            child: IntrinsicHeight(
+              child: Row(
                 children: [
-                  CustomerOrderListView(customerOrder: widget.customerOrders[currentOrderIndex]),
-                  const Divider(),
-                  CustomerOrderActionView(
-                    customerOrder: widget.customerOrders[currentOrderIndex],
-                    onAccept: _handleAccept,
-                    onCancel: _handleCancel,
-                  )
+                  Expanded(
+                    flex: 2,
+                    child: Column(
+                      children: [
+                        _buildHeader(context),
+                        Expanded(
+                          child: CustomerOrderListView(
+                            customerOrder:
+                                widget.customerOrders[_currentOrderIndex],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    width: 1,
+                    color: Colors.grey[300],
+                  ),
+                  Expanded(
+                    child: CustomerOrderActionView(
+                      customerOrder: widget.customerOrders[_currentOrderIndex],
+                      onAccept: (order) {
+                        widget.onAccept(order);
+                        _moveToNextOrder();
+                      },
+                      onCancel: (order) {
+                        widget.onCancel(order);
+                        _moveToNextOrder();
+                      },
+                    ),
+                  ),
                 ],
-              )
-          ],
-        ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  void _showPhoneDialog(BuildContext context, CustomerOrder currentOrder) {
+  Row _buildHeader(BuildContext context) {
+    return Row(
+      children: [
+        IconButton(
+          icon: const Icon(Icons.close),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        const SizedBox(width: 10),
+        Text('$_firstName $_lastName',
+            style: Theme.of(context).textTheme.headlineSmall),
+        const SizedBox(width: 6),
+        const Icon(Icons.circle, size: 10.0),
+        const SizedBox(width: 6),
+        Text(_orderId, style: Theme.of(context).textTheme.headlineSmall),
+        const Spacer(),
+        Padding(
+          padding: const EdgeInsets.only(right: 8.0),
+          child: Row(
+            children: [
+              IconButton(
+                  icon: const Icon(Icons.phone),
+                  onPressed: () => _showPhoneDialog(context)),
+              const SizedBox(width: 6),
+              Text(
+                  'Order ${_currentOrderIndex + 1} of ${widget.customerOrders.length}',
+                  style: Theme.of(context).textTheme.headlineSmall),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _showPhoneDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -135,9 +135,9 @@ class _NewCustomerOrderDialogState extends State<NewCustomerOrderDialog> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Name: ${currentOrder.firstName} ${currentOrder.lastName}'),
+              Text('Name: $_firstName $_lastName'),
               const SizedBox(height: 8),
-              Text('Phone: ${currentOrder.contactPhone}'),
+              Text('Phone: $_phoneNumber'),
             ],
           ),
           actions: <Widget>[

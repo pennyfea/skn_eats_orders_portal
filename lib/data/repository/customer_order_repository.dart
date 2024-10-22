@@ -27,7 +27,7 @@ class CustomerOrderRepository {
       return snapshot.docs
           .map((doc) {
             try {
-              return CustomerOrder.fromFirestore(doc.data());
+              return CustomerOrder.fromFirestore(doc as DocumentSnapshot<Map<String, dynamic>>);
             } catch (e, stackTrace) {
               logger.e("Error converting order data: $e\n$stackTrace");
               return null;
@@ -38,60 +38,47 @@ class CustomerOrderRepository {
     });
   }
 
-  Future<void> updateCustomerOrder({
-    required String restaurantId,
-    required String locationId,
-    required CustomerOrder customerOrder,
-  }) async {
-    try {
-      logger.d(
-          "Updating order for restaurant: $restaurantId, location: $locationId, order ID: ${customerOrder.id}");
-      await _firebaseFirestore
-          .collection('restaurants')
-          .doc(restaurantId)
-          .collection('locations')
-          .doc(locationId)
-          .collection('orders')
-          .doc(customerOrder.id)
-          .update(customerOrder.toFirestore());
+Future<void> updateCustomerOrder({
+  required String restaurantId,
+  required String locationId,
+  required CustomerOrder customerOrder,
+}) async {
+  try {
+    logger.d(
+        "Updating order for restaurant: $restaurantId, location: $locationId, order ID: ${customerOrder.id}");
+    
+    // Update in the restaurant's orders collection
+    await _firebaseFirestore
+        .collection('restaurants')
+        .doc(restaurantId)
+        .collection('locations')
+        .doc(locationId)
+        .collection('orders')
+        .doc(customerOrder.id)
+        .update(customerOrder.toFirestore());
 
-      logger.d("Order updated successfully");
-    } catch (e, stackTrace) {
-      logger.w('Error in updateCustomerOrder: $e');
-      logger.w('Stack trace: $stackTrace');
-      if (e is FirebaseException) {
-        logger.w('Firebase error code: ${e.code}');
-        logger.w('Firebase error message: ${e.message}');
-      }
-      rethrow;
-    }
-  }
+    // Update in the customer_orders collection
+    final customerOrderQuery = await _firebaseFirestore
+        .collection('customer_orders')
+        .where('id', isEqualTo: customerOrder.id)
+        .get();
 
-  Future<void> addCustomerOrder({
-    required String restaurantId,
-    required String locationId,
-    required CustomerOrder customerOrder,
-  }) async {
-    try {
-      logger.d(
-          "Adding new order for restaurant: $restaurantId, location: $locationId");
-      await _firebaseFirestore
-          .collection('restaurants')
-          .doc(restaurantId)
-          .collection('locations')
-          .doc(locationId)
-          .collection('orders')
-          .doc(customerOrder.id)
-          .set(customerOrder.toFirestore());
-      logger.d("Order added successfully");
-    } catch (e, stackTrace) {
-      logger.w('Error in addCustomerOrder: $e');
-      logger.w('Stack trace: $stackTrace');
-      if (e is FirebaseException) {
-        logger.w('Firebase error code: ${e.code}');
-        logger.w('Firebase error message: ${e.message}');
-      }
-      rethrow;
+    if (customerOrderQuery.docs.isNotEmpty) {
+      final customerOrderDoc = customerOrderQuery.docs.first;
+      await customerOrderDoc.reference.update(customerOrder.toFirestore());
+    } else {
+      logger.w('No matching customer order found with ID: ${customerOrder.id}');
     }
+
+    logger.d("Order updated successfully");
+  } catch (e, stackTrace) {
+    logger.w('Error in updateCustomerOrder: $e');
+    logger.w('Stack trace: $stackTrace');
+    if (e is FirebaseException) {
+      logger.w('Firebase error code: ${e.code}');
+      logger.w('Firebase error message: ${e.message}');
+    }
+    rethrow;
   }
+}
 }

@@ -31,7 +31,10 @@ class CartItem extends Equatable {
     return json;
   }
 
-  factory CartItem.fromFirestore(Map<String, dynamic> data) {
+  factory CartItem.fromFirestore(dynamic data) {
+    if (data is! Map<String, dynamic>) {
+      throw ArgumentError('Expected Map<String, dynamic>, but received ${data.runtimeType}');
+    }
     return CartItem(
       id: data['id'] as String? ?? '',
       menuItem: MenuItem.fromFirestore(data['menuItem']),

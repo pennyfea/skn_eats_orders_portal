@@ -1,3 +1,4 @@
+export '../data/model/location.dart';
 export '../data/model/customer_order.dart';
 export '../data/model/order_progress.dart';
 export '../data/model/discount.dart';

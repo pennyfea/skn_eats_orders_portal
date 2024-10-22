@@ -1,11 +1,25 @@
 import 'package:flutter/material.dart';
-
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../data/app_state_manager.dart';
+import '../../../data/blocs.dart';
 import '../../../data/models.dart';
+import '../components.dart';
 
 class PendingOrderTile extends StatelessWidget {
   final CustomerOrder order;
   
   const PendingOrderTile({super.key, required this.order});
+
+  void _handleOrderUpdate(BuildContext context, CustomerOrder order, OrderStatus status) {
+    final appStateManager = context.read<AppStateManager>();
+    context.read<CustomerOrderBloc>().add(
+      CustomerOrderUpdated(
+        customerOrder: order.copyWith(status: status),
+        locationId: appStateManager.locationId!,
+        restaurantId: appStateManager.restaurantId!,
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +41,7 @@ class PendingOrderTile extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    '${order.firstName} ${order.lastName[0]}',
+                    '${order.firstName} ${order.lastName.isNotEmpty ? order.lastName[0] : ''}',
                     style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
@@ -62,20 +76,20 @@ class PendingOrderTile extends StatelessWidget {
           ),
         ),
       ),
-      // onTap: () {
-      //   context.read<CustomerOrderBloc>().add(SelectedCustomerOrder(customerOrder: order));
-      //   showFullScreenOrderDialog(context, order);
-      // },
+      onTap: () => _showOrderDialog(context),
     );
   }
 
-  // void showFullScreenOrderDialog(BuildContext context, CustomerOrder pendingOrder) async {
-  //   bool? accepted = await showDialog<bool>(
-  //     context: context,
-  //     barrierDismissible: false,
-  //     builder: (BuildContext context) {
-  //       return NewCustomerOrderDialog(customerOrders: [pendingOrder]);
-  //     },
-  //   );
-  // }
+  void _showOrderDialog(BuildContext context) {
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) => NewCustomerOrderDialog(
+        customerOrders: [order],
+        onAccept: (order) => _handleOrderUpdate(context, order, OrderStatus.preparing),
+        onCancel: (order) => _handleOrderUpdate(context, order, OrderStatus.cancel),
+        onClose: () => Navigator.of(context).pop(),
+      ),
+    );
+  }
 }

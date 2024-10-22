@@ -19,10 +19,10 @@ class CustomDrawer extends StatelessWidget {
         'icon': const Icon(Icons.restaurant, size: 25),
         'routeName': 'menu',
       },
-      'Settings': {
-        'icon': const Icon(Icons.settings, size: 25),
-        'routeName': 'settings',
-      },
+      // 'Settings': {
+      //   'icon': const Icon(Icons.settings, size: 25),
+      //   'routeName': 'settings',
+      // },
     };
 
     return Drawer(

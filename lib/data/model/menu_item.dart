@@ -101,31 +101,35 @@ class MenuItem extends Equatable {
     };
   }
 
-  factory MenuItem.fromFirestore(
-      DocumentSnapshot<Map<String, dynamic>> snapshot) {
-    final data = snapshot.data();
-    if (data == null) {
-      throw Exception('Document does not exist');
+  factory MenuItem.fromFirestore(dynamic snapshot) {
+    late Map<String, dynamic> data;
+    
+    if (snapshot is DocumentSnapshot<Map<String, dynamic>>) {
+      data = snapshot.data() ?? {};
+    } else if (snapshot is Map<String, dynamic>) {
+      data = snapshot;
+    } else {
+      throw ArgumentError('Expected DocumentSnapshot or Map<String, dynamic>, but received ${snapshot.runtimeType}');
     }
 
     return MenuItem(
       id: data['id'] as String?,
       restaurantId: data['restaurantId'] as String?,
       locationId: data['locationId'] as String?,
-      name: data['name'] as String,
+      name: data['name'] as String? ?? '',
       imageUrl: data['imageUrl'] as String?,
       menuCategoryIds: List<String>.from(data['menuCategoryIds'] ?? []),
       itemCategoryIds: List<String>.from(data['itemCategoryIds'] ?? []),
       requiredOptions: data['requiredOptions'] != null
           ? List<MenuItemOption>.from((data['requiredOptions'] as List)
-              .map((e) => MenuItemOption.fromJson(e)))
+              .map((e) => MenuItemOption.fromJson(e as Map<String, dynamic>)))
           : null,
       optionalAddOns: data['optionalAddOns'] != null
           ? List<MenuItemOption>.from((data['optionalAddOns'] as List)
-              .map((e) => MenuItemOption.fromJson(e)))
+              .map((e) => MenuItemOption.fromJson(e as Map<String, dynamic>)))
           : null,
-      description: data['description'] as String,
-      price: (data['price'] as num).toDouble(),
+      description: data['description'] as String? ?? '',
+      price: (data['price'] as num?)?.toDouble() ?? 0.0,
     );
   }
 }
