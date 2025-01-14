@@ -33,6 +33,7 @@ class CustomerOrder extends Equatable {
   final Location? storeLocation;
   final Location? userLocation;
   final Location? driverLocation;
+  final String? dropOffImageUrl;
 
   const CustomerOrder({
     required this.id,
@@ -58,6 +59,7 @@ class CustomerOrder extends Equatable {
     this.storeLocation,
     this.userLocation,
     this.driverLocation,
+    this.dropOffImageUrl
   });
 
   @override
@@ -85,6 +87,7 @@ class CustomerOrder extends Equatable {
         storeLocation,
         userLocation,
         driverLocation,
+        dropOffImageUrl
       ];
 
   CustomerOrder copyWith({
@@ -111,6 +114,7 @@ class CustomerOrder extends Equatable {
     Location? storeLocation,
     Location? userLocation,
     Location? driverLocation,
+    String? dropOffImageUrl
   }) {
     return CustomerOrder(
       id: id ?? this.id,
@@ -136,29 +140,29 @@ class CustomerOrder extends Equatable {
       storeLocation: storeLocation ?? this.storeLocation,
       userLocation: userLocation ?? this.userLocation,
       driverLocation: driverLocation ?? this.driverLocation,
+      dropOffImageUrl: dropOffImageUrl ?? this.dropOffImageUrl
     );
   }
 
   double calculateSubtotal() {
-    return cartItems.fold(0.0, (sum, item) {
+    return cartItems.fold(0.0, (total, item) {
       double itemTotal = item.menuItem.price * item.quantity;
       if (item.menuItem.requiredOptions != null) {
         itemTotal += item.menuItem.requiredOptions!
             .where((option) => option.price != null)
-            .fold(0.0, (sum, option) => sum + (option.price ?? 0));
+            .fold(0.0, (total, option) => total + (option.price ?? 0));
       }
       if (item.menuItem.optionalAddOns != null) {
         itemTotal += item.menuItem.optionalAddOns!
             .where((option) => option.price != null)
-            .fold(0.0, (sum, option) => sum + (option.price ?? 0));
+            .fold(0.0, (total, option) => total + (option.price ?? 0));
       }
-      return sum + itemTotal;
+      return total + itemTotal;
     });
   }
 
   // JSON serialization
-  factory CustomerOrder.fromJson(Map<String, dynamic> json) =>
-      _$CustomerOrderFromJson(json);
+  factory CustomerOrder.fromJson(Map<String, dynamic> json) => _$CustomerOrderFromJson(json);
   Map<String, dynamic> toJson() => _$CustomerOrderToJson(this);
 
   // Firestore serialization
@@ -188,36 +192,41 @@ class CustomerOrder extends Equatable {
       'storeLocation': storeLocation?.toFirestore(),
       'userLocation': userLocation?.toFirestore(),
       'driverLocation': driverLocation?.toFirestore(),
+      'dropOffImageUrl': dropOffImageUrl
     };
   }
 
-factory CustomerOrder.fromFirestore(DocumentSnapshot<Map<String, dynamic>> snapshot) {
-  final data = snapshot.data() ?? {};
-  final statusString = data['status'] as String?;
-  final orderStatus = statusString != null
-      ? OrderStatus.values.firstWhere(
-          (s) => s.toString().split('.').last == statusString,
-          orElse: () => OrderStatus.pending)
-      : OrderStatus.pending;
+  factory CustomerOrder.fromFirestore(DocumentSnapshot<Map<String, dynamic>> snapshot) {
+    final data = snapshot.data() ?? {};
+    final statusString = data['status'] as String?;
+    final orderStatus = statusString != null
+        ? OrderStatus.values.firstWhere(
+            (s) => s.toString().split('.').last == statusString,
+            orElse: () => OrderStatus.pending)
+        : OrderStatus.pending;
 
-  final progressData = data['progress'] as List<dynamic>?;
-  final progress = progressData != null
-      ? progressData
-          .map((p) => OrderProgress.fromFirestore(p as Map<String, dynamic>))
-          .toList()
-      : <OrderProgress>[];
+    final progressData = data['progress'] as List<dynamic>?;
+    final progress = progressData != null
+        ? progressData
+            .map((p) => OrderProgress.fromFirestore(p as Map<String, dynamic>))
+            .toList()
+        : <OrderProgress>[];
 
-  final cartItemsData = data['cartItems'] as List<dynamic>?;
-  final cartItems = <CartItem>[];
-  if (cartItemsData != null) {
-    for (final item in cartItemsData) {
-      try {
-        cartItems.add(CartItem.fromFirestore(item));
-      } catch (e) {
-        print('Error converting cartItem: $e');
+    final cartItemsData = data['cartItems'] as List<dynamic>?;
+    final cartItems = <CartItem>[];
+    if (cartItemsData != null) {
+      for (final item in cartItemsData) {
+        try {
+          if (item is Map<String, dynamic>) {
+            cartItems.add(CartItem.fromFirestore(item));
+          } else {
+            throw('Unexpected cartItem type: ${item.runtimeType}');
+          }
+        } catch (e) {
+          throw('Error converting cartItem: $e');
+        }
       }
     }
-  }
 
     return CustomerOrder(
       id: data['id'] as String? ?? '',
@@ -255,6 +264,8 @@ factory CustomerOrder.fromFirestore(DocumentSnapshot<Map<String, dynamic>> snaps
           ? Location.fromFirestore(
               data['driverLocation'] as Map<String, dynamic>)
           : null,
+      dropOffImageUrl: data['dropOffImageUrl'] as String?
     );
   }
 }
+

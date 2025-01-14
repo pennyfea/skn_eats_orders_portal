@@ -2,7 +2,6 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:logger/logger.dart';
-import 'package:firebase_auth/firebase_auth.dart' hide User;
 import '../../models.dart';
 import '../../repository.dart';
 

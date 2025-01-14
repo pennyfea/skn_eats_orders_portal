@@ -25,7 +25,7 @@ class _CustomerOrderListViewState extends State<CustomerOrderListView> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text('$totalItems Items',
-              style: Theme.of(context).textTheme.headlineSmall),
+              style: Theme.of(context).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.bold)),
           const SizedBox(height: 16),
           ListView.separated(
             shrinkWrap: true,
@@ -40,14 +40,14 @@ class _CustomerOrderListViewState extends State<CustomerOrderListView> {
                     contentPadding: EdgeInsets.zero,
                     leading: Text('${item.quantity} x',
                         style:
-                            Theme.of(context).textTheme.headlineSmall),
+                            Theme.of(context).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.bold)),
                     title: Text(item.menuItem.name,
                         style:
-                            Theme.of(context).textTheme.headlineSmall),
+                            Theme.of(context).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.bold)),
                     trailing: Text(
                         '\$${(item.menuItem.price * item.quantity).toStringAsFixed(2)}',
                         style:
-                            Theme.of(context).textTheme.headlineSmall),
+                            Theme.of(context).textTheme.titleMedium),
                   ),
                   if (item.menuItem.requiredOptions != null &&
                       item.menuItem.requiredOptions!.isNotEmpty)
@@ -145,7 +145,7 @@ class _CustomerOrderListViewState extends State<CustomerOrderListView> {
             children: [
               Text(
                   'Subtotal: \$${widget.customerOrder.calculateSubtotal().toStringAsFixed(2)}',
-                  style: Theme.of(context).textTheme.headlineSmall),
+                  style: Theme.of(context).textTheme.titleMedium!.copyWith(fontWeight: FontWeight.bold)),
             ],
           ),
         ],

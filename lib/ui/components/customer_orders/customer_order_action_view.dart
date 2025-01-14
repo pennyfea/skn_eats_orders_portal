@@ -71,15 +71,14 @@ class _CustomerOrderActionViewState extends State<CustomerOrderActionView> {
           Text('Ready time',
               style: Theme.of(context)
                   .textTheme
-                  .headlineSmall!
-                  .copyWith(fontSize: 20)),
-  
+                  .titleLarge!
+                  .copyWith(fontWeight: FontWeight.bold)),
           Text('${selectedTime.minute} min',
               style: Theme.of(context).textTheme.headlineLarge),
           if (selectedTime == const TimeOfDay(hour: 0, minute: 30))
             Text('Suggested',
-                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                    color: Colors.green, fontWeight: FontWeight.w700)),
+                style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                    color: Colors.green, fontWeight: FontWeight.bold)),
           SizedBox(
             width: 80,
             child: ElevatedButton(
@@ -105,30 +104,37 @@ class _CustomerOrderActionViewState extends State<CustomerOrderActionView> {
           ),
           Column(
             children: [
-              MaterialButton(
-                minWidth: MediaQuery.of(context).size.width,
-                height: 50.0,
-                textColor: Colors.white,
-                color: Colors.red,
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(4.0)),
+              FilledButton(
+                style: ButtonStyle(
+                    minimumSize: WidgetStateProperty.all(
+                        Size(MediaQuery.of(context).size.width, 50)),
+                    backgroundColor: WidgetStateProperty.all(Colors.grey[300]),
+                    elevation: WidgetStateProperty.all(0),
+                    shape: WidgetStateProperty.all(RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4.0)))),
                 onPressed: _handleCancel,
-                child: const Text('Cancel', style: TextStyle(fontSize: 18)),
+                child: Text('Cancel',
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleMedium!
+                        .copyWith(color: Colors.black)),
               ),
               const SizedBox(
                 height: 5,
               ),
-              MaterialButton(
-                minWidth: MediaQuery.of(context).size.width,
-                height: 50.0,
-                textColor: Colors.white,
-                color: Colors.green,
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(4.0)),
+              FilledButton(
+                style: ButtonStyle(
+                    minimumSize: WidgetStateProperty.all(
+                        Size(MediaQuery.of(context).size.width, 50)),
+                    elevation: WidgetStateProperty.all(0),
+                    shape: WidgetStateProperty.all(RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4.0)))),
                 onPressed: _handleAccept,
-                child: const Text('Accept', style: TextStyle(fontSize: 18)),
+                child: Text('Accept',
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleMedium!
+                        .copyWith(color: Colors.white)),
               ),
             ],
           ),

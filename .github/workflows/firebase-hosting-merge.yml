@@ -12,7 +12,7 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.24.3'  # Specify Flutter version that includes Dart 3.5.1
+          flutter-version: '3.27.1'  # Specify Flutter version that includes Dart 3.5.1
           channel: 'stable'           # Ensure you're on the stable channel
 
       - name: Install dependencies

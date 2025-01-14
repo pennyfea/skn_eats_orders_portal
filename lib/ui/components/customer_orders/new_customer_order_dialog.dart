@@ -101,11 +101,11 @@ class _NewCustomerOrderDialogState extends State<NewCustomerOrderDialog> {
         ),
         const SizedBox(width: 10),
         Text('$_firstName $_lastName',
-            style: Theme.of(context).textTheme.headlineSmall),
+            style: Theme.of(context).textTheme.headlineMedium!.copyWith(fontWeight: FontWeight.bold)),
         const SizedBox(width: 6),
         const Icon(Icons.circle, size: 10.0),
         const SizedBox(width: 6),
-        Text(_orderId, style: Theme.of(context).textTheme.headlineSmall),
+        Text(_orderId, style: Theme.of(context).textTheme.headlineMedium!.copyWith(fontWeight: FontWeight.bold)),
         const Spacer(),
         Padding(
           padding: const EdgeInsets.only(right: 8.0),
@@ -117,7 +117,7 @@ class _NewCustomerOrderDialogState extends State<NewCustomerOrderDialog> {
               const SizedBox(width: 6),
               Text(
                   'Order ${_currentOrderIndex + 1} of ${widget.customerOrders.length}',
-                  style: Theme.of(context).textTheme.headlineSmall),
+                  style: Theme.of(context).textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.bold)),
             ],
           ),
         ),

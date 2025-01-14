@@ -4,9 +4,14 @@ import '../../../data/blocs.dart';
 import '../../../data/models.dart';
 import '../../components/components.dart';
 
-class OrderHistoryScreen extends StatelessWidget {
+class OrderHistoryScreen extends StatefulWidget {
   const OrderHistoryScreen({super.key});
 
+  @override
+  State<OrderHistoryScreen> createState() => _OrderHistoryScreenState();
+}
+
+class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
   @override
   Widget build(BuildContext context) {
     return CustomLayout(
@@ -29,12 +34,12 @@ class OrderHistoryScreen extends StatelessWidget {
                   : state.orders;
 
               if (ordersToDisplay.isEmpty) {
-                return const Center(
+                return  Center(
                   child: Padding(
-                    padding: EdgeInsets.all(16.0),
+                    padding: const EdgeInsets.all(16.0),
                     child: Text(
                       'No orders available for the selected filters.',
-                      style: TextStyle(fontSize: 16, color: Colors.grey),
+                      style: Theme.of(context).textTheme.titleMedium,
                     ),
                   ),
                 );
@@ -253,10 +258,10 @@ class OrderHistoryScreen extends StatelessWidget {
   Widget _buildOrderSection(String title, List<CustomerOrder> orders) {
     if (orders.isEmpty) {
       return Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding:  const EdgeInsets.all(16.0),
         child: Text(
           'No orders available for $title.',
-          style: const TextStyle(fontSize: 16, color: Colors.grey),
+          style: Theme.of(context).textTheme.titleMedium,
         ),
       );
     }

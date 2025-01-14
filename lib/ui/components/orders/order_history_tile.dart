@@ -5,7 +5,7 @@ import '../../../data/models.dart';
 class OrderHistoryTile extends StatelessWidget {
   final CustomerOrder order;
 
-  const OrderHistoryTile({Key? key, required this.order}) : super(key: key);
+  const OrderHistoryTile({super.key, required this.order});
 
   @override
   Widget build(BuildContext context) {

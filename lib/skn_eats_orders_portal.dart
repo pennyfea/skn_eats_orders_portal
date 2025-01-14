@@ -6,6 +6,7 @@ import 'data/blocs.dart';
 import 'data/menu_app_controller.dart';
 import 'data/repository.dart';
 import 'navigation/app_router.dart';
+import 'package:flex_color_scheme/flex_color_scheme.dart';
 
 class SknEatsOrdersPanel extends StatefulWidget {
   const SknEatsOrdersPanel({super.key});
@@ -17,11 +18,8 @@ class SknEatsOrdersPanel extends StatefulWidget {
 class _SknEatsOrdersPanelState extends State<SknEatsOrdersPanel> {
   late final RestaurantRepository _restaurantRepository;
   late final CustomerOrderRepository _customerOrderRepository;
-  // late final CustomerRepository _customerRepository;
-  // late final DiscountRepository _discountRepository;
   late final MenuItemRepository _menuItemRepository;
   late final MenuCategoryRepository _menuCategoryRepository;
-  // late final ItemCategoryRepository _itemCategoryRepository;
   late final UserRepository _userRepository;
   late final AuthRepository _authRepository;
   late final AppStateManager _appStateManager;
@@ -33,11 +31,8 @@ class _SknEatsOrdersPanelState extends State<SknEatsOrdersPanel> {
     super.initState();
     _restaurantRepository = RestaurantRepository();
     _customerOrderRepository = CustomerOrderRepository();
-    // _customerRepository = CustomerRepository();
-    // _discountRepository = DiscountRepository();
     _menuItemRepository = MenuItemRepository();
     _menuCategoryRepository = MenuCategoryRepository();
-    // _itemCategoryRepository = ItemCategoryRepository();
     _userRepository = UserRepository();
     _authRepository = AuthRepository();
     _appStateManager = AppStateManager();
@@ -69,17 +64,11 @@ class _SknEatsOrdersPanelState extends State<SknEatsOrdersPanel> {
             value: _restaurantRepository),
         RepositoryProvider<CustomerOrderRepository>.value(
             value: _customerOrderRepository),
-        // RepositoryProvider<DiscountRepository>.value(
-        //     value: _discountRepository),
-        // RepositoryProvider<CustomerRepository>.value(
-        //     value: _customerRepository),
         RepositoryProvider<AuthRepository>.value(value: _authRepository),
         RepositoryProvider<MenuItemRepository>.value(
             value: _menuItemRepository),
         RepositoryProvider<MenuCategoryRepository>.value(
             value: _menuCategoryRepository),
-        // RepositoryProvider<ItemCategoryRepository>.value(
-        //     value: _itemCategoryRepository),
         RepositoryProvider<UserRepository>.value(value: _userRepository),
         // Change Notifiers
         ChangeNotifierProvider<AppStateManager>.value(value: _appStateManager),
@@ -87,33 +76,15 @@ class _SknEatsOrdersPanelState extends State<SknEatsOrdersPanel> {
             create: (_) => MenuAppController()),
         // Bloc Providers
         BlocProvider<AppAuthBloc>.value(value: _appAuthBloc),
-        // BlocProvider<RestaurantBloc>(
-        //     create: (context) => RestaurantBloc(
-        //         restaurantRepository: _restaurantRepository,
-        //         appStateManager: _appStateManager)),
-        // BlocProvider<SettingsBloc>(
-        //     create: (context) =>
-        //         SettingsBloc(restaurantRepository: _restaurantRepository)),
-        // BlocProvider<CustomersBloc>(
-        //     create: (context) =>
-        //         CustomersBloc(customerRepository: _customerRepository)),
-        // BlocProvider<DiscountBloc>(
-        //     create: (context) =>
-        //         DiscountBloc(discountRepository: _discountRepository)),
         BlocProvider<MenuCategoryBloc>(
             create: (context) => MenuCategoryBloc(
                 menuCategoryRepository: _menuCategoryRepository)),
-        // BlocProvider<ItemCategoryBloc>(
-        //     create: (context) => ItemCategoryBloc(
-        //         itemCategoryRepository: _itemCategoryRepository)),
         BlocProvider<MenuItemBloc>(
             create: (context) =>
                 MenuItemBloc(menuItemRepository: _menuItemRepository)),
         BlocProvider<CustomerOrderBloc>(
             create: (context) => CustomerOrderBloc(
                 customerOrderRepository: _customerOrderRepository)),
-        // BlocProvider<UserBloc>(
-        //     create: (context) => UserBloc(userRepository: _userRepository, authRepository: _authRepository)),
       ],
       child: Builder(
         builder: (context) {
@@ -132,7 +103,12 @@ class _SknEatsOrdersPanelState extends State<SknEatsOrdersPanel> {
               ),
             ],
             child: MaterialApp.router(
-              title: 'SKN Eats Orders Panel-',
+              theme: FlexThemeData.light(
+                  scheme: FlexScheme.blackWhite,
+                  subThemesData: const FlexSubThemesData(
+                      appBarBackgroundSchemeColor: SchemeColor.tertiary),
+                  useMaterial3: true),
+              title: 'SKN Eats Orders',
               debugShowCheckedModeBanner: false,
               routerDelegate: _appRouter.router.routerDelegate,
               routeInformationParser: _appRouter.router.routeInformationParser,
